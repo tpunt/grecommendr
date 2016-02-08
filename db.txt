@@ -1,0 +1,728 @@
+/*
+This is a (probably invalid Cypher syntax) comment regarding this DB.
+
+Nodes:
+The Game nodes (x20) are completed.
+The User nodes (x5) should suffice.
+The Order nodes (x3) are not complete (there are not enough of them)
+
+Make sure the nodes are **completely** set up before adding the relationships
+
+Relationships (none are fully set up yet):
+The Order->Game ([:CONTAINS] denotes an order containing 1+ game(s))
+The User->Order ([:PURCHASED] denotes a user who purchased an order)
+The User->Order ([:MOST_RECENTLY_ORDERED] and [:PREVIOUSLY_ORDERED] denotes a user's order - THIS IS DIFFERENT TO ABOVE) *1
+The User->User ([:FRIENDS_WITH] denotes a user is friends with another user)
+The User->Game ([:PLAYED_WITH] denotes a user has played with a certain game)
+The User->Game ([:MOST_RECENTLY_PLAYED] and [:PREVIOUSLY_PLAYED] denotes a user's game play - THIS IS DIFFERENT TO ABOVE) *2
+The User->Game ([:WISHES_FOR] denotes a game is on a user's wish list)
+The User->Game ([:RATES] denotes a user has rated a game)
+
+*1 - The second User->Order relationship is effectively a singly-linked list structure to determine
+the order in which the orders were placed. See the MOST_RECENT and PREVIOUS relationships on the
+following image: http://postimg.org/image/4hsjubzrz/
+
+*2 - This scenario is basically the same as *1, where we create a singly-linked list structure to
+see e.g. the latest (i.e. last 5) games a user has played.
+*/
+
+
+CREATE
+  (game1:Game {
+    gameId: 1,
+    gameName: 'Call of Duty: Modern Warfare 2',
+    preorderCount: 5124,
+    purchaseCount: 6666,
+    releaseDate: 1320451200,
+    averageRating: 3.3,
+    ratingCount: 503,
+    genre: 'action',
+    tags: ['fps', 'action', 'shooter', 'multiplayer']
+  }),
+  (game2:Game {
+    gameId: 2,
+    gameName: 'Call of Duty: Black Ops III',
+    preorderCount: 1999,
+    purchaseCount: 8475,
+    releaseDate: 1446768000,
+    averageRating: 4.5,
+    ratingCount: 1001,
+    genre: 'action',
+    tags: ['fps', 'action', 'shooter', 'multiplayer', 'zombies']
+  }),
+  (game3:Game {
+    gameId: 3,
+    gameName: 'Rise of the Tomb Raider',
+    preorderCount: 1500,
+    purchaseCount: 4512,
+    releaseDate: 1453939200,
+    averageRating: 3.1,
+    ratingCount: 103,
+    genre: 'adventure',
+    tags: ['adventure', 'action', 'lara croft','survival']
+  }),
+  (game4:Game {
+    gameId: 4,
+    gameName: 'Grand Theft Auto V',
+    preorderCount: 5543,
+    purchaseCount: 11005,
+    releaseDate: 1428969600,
+    averageRating: 4.7,
+    ratingCount: 60,
+    genre: 'adventure',
+    tags: ['adventure', 'action', 'open world', 'multiplayer', 'shooter']
+  }),
+  (game5:Game {
+    gameId: 5,
+    gameName: 'Tom Clancy’s The Division',
+    preorderCount: 4251,
+    purchaseCount: 0,
+    releaseDate: 1457395200,
+    averageRating: 1.2,
+    ratingCount: 409,
+    genre: 'action',
+    tags: ['action', 'open world', 'multiplayer', 'shooter', 'survival', 'RPG']
+  }),
+  (game6:Game {
+    gameId: 6,
+    gameName: 'ARK: Survival Evolved',
+    preorderCount: 999,
+    purchaseCount: 7513,
+    releaseDate: 1433203200,
+    averageRating: 3.8,
+    ratingCount: 298,
+    genre: 'MMO',
+    tags: ['MMO', 'survival', 'dinosaurs','open world', 'multiplayer', 'building']
+  }),
+  (game7:Game {
+    gameId: 7,
+    gameName: 'H1Z1',
+    preorderCount: 0,
+    purchaseCount: 8612,
+    demoDownloadCount: -1,
+    releaseDate: 1434326400,
+    averageRating: 4.6,
+    ratingCount: 876,
+    genre: 'MMO',
+    tags: ['MMO', 'fps', 'zombies', 'survival', 'building', 'open world', 'shooter']
+  }),
+  (game8:Game {
+    gameId: 8,
+    gameName: 'DayZ',
+    preorderCount: 4000,
+    purchaseCount: 0,
+    releaseDate: 1387152000,
+    averageRating: 4.9,
+    ratingCount: 187,
+    genre: 'MMO',
+    tags: ['MMO', 'fps', 'zombies', 'open world', 'survival', 'multiplayer', 'shooter', 'action']
+  }),
+  (game9:Game {
+    gameId: 9,
+    gameName: 'DiRT Rally',
+    preorderCount: 845,
+    purchaseCount: 8854,
+    releaseDate: 1449446400,
+    averageRating: 0.9,
+    ratingCount: 319,
+    genre: 'racing',
+    tags: ['racing', 'simulation', 'multiplayer', 'driving', 'offroad']
+  }),
+  (game10:Game {
+    gameId: 10,
+    gameName: 'Project CARS',
+    preorderCount: 0,
+    purchaseCount: 3475,
+    demoDownloadCount: 664,
+    releaseDate: 1430870400,
+    averageRating: 2.9,
+    ratingCount: 354,
+    genre: 'racing',
+    tags: ['racing', 'track', 'driving', 'simulation', 'realistic', 'multiplayer']
+  }),
+  (game11:Game {
+    gameId: 11,
+    gameName: 'The Crew',
+    preorderCount: 78,
+    purchaseCount: 2451,
+    releaseDate: 1418947200,
+    averageRating: 4.4,
+    ratingCount: 643,
+    genre: 'racing',
+    tags: ['racing', 'MMO', 'open world', 'driving', 'multiplayer']
+  }),
+  (game12:Game {
+    gameId: 12,
+    gameName: 'Need for Speed Undercover',
+    preorderCount: 0,
+    purchaseCount: 1421,
+    releaseDate: 1226966400,
+    averageRating: 4.8,
+    ratingCount: 246,
+    genre: 'racing',
+    tags: ['racing', 'open world', 'action', 'multiplayer', 'driving']
+  }),
+  (game13:Game {
+    gameId: 13,
+    gameName: 'Fallout 4',
+    preorderCount: 5454,
+    purchaseCount: 8014,
+    releaseDate: 1447113600,
+    averageRating: 4.7,
+    ratingCount: 450,
+    genre: 'RPG',
+    tags: ['RPG', 'open world','singleplayer', 'adventure', 'exploration', 'shooter', 'story rich']
+  }),
+  (game14:Game {
+    gameId: 14,
+    gameName: 'The Witcher 3: Wild Hunt',
+    preorderCount: 5124,
+    purchaseCount: 11240,
+    releaseDate: 1431907200,
+    averageRating: 3.1,
+    ratingCount: 101,
+    genre: 'RPG',
+    tags: ['RPG', 'story rich', 'open world', 'fantasy', 'adventure', 'mature', 'atmospheric', 'singleplayer']
+  }),
+  (game15:Game {
+    gameId: 15,
+    gameName: 'The Elder Scrolls V: Skyrim',
+    preorderCount: 3142,
+    purchaseCount: 12349,
+    releaseDate: 1320969600,
+    averageRating: 3.9,
+    ratingCount: 769,
+    genre: 'RPG',
+    tags: ['RPG', 'adventure', 'fantasy', 'action', 'open world', 'dragons', 'singleplayer']
+  }),
+  (game16:Game {
+    gameId: 16,
+    gameName: 'Dying Light',
+    preorderCount: 874,
+    purchaseCount: 3254,
+    releaseDate: 1422316800,
+    averageRating: 3.5,
+    ratingCount: 563,
+    genre: 'RPG',
+    tags: ['RPG', 'zombies', 'survival', 'open world', 'action', 'shooter', 'multiplayer', 'singleplayer']
+  }),
+  (game17:Game {
+    gameId: 17,
+    gameName: 'Football Manager 2016',
+    preorderCount: 0,
+    purchaseCount: 1034,
+    releaseDate: 1447027200,
+    averageRating: 2.8,
+    ratingCount: 1201,
+    genre: 'simulation',
+    tags: ['simulation', 'sports', 'management', 'football', 'strategy']
+  }),
+  (game18:Game {
+    gameId: 18,
+    gameName: 'Cities: Skylines',
+    preorderCount: 0,
+    purchaseCount: 5512,
+    releaseDate: 1425945600,
+    averageRating: 3.2,
+    ratingCount: 345,
+    genre: 'simulation',
+    tags: ['simulation', 'city builder', 'strategy', 'management', 'sandbox']
+  }),
+  (game19:Game {
+    gameId: 19,
+    gameName: 'Euro Truck Simulator 2',
+    preorderCount: 0,
+    purchaseCount: 984,
+    releaseDate: 1358294400,
+    averageRating: 3.8,
+    ratingCount: 359,
+    genre: 'simulation',
+    tags: ['simulation', 'driving', 'open world', 'realistic', 'indie', 'relaxing']
+  }),
+  (game20:Game {
+    gameId: 20,
+    gameName: 'Age of Empires II',
+    preorderCount: 7845,
+    purchaseCount: 12762,
+    releaseDate: 938649600,
+    averageRating: 5,
+    ratingCount: 200,
+    genre: 'strategy',
+    tags: ['strategy', 'RTS', 'multiplayer', 'classic', 'medieval', 'singleplayer', 'historical']
+  }),
+  (game21:Game {
+    gameId: 21,
+    gameName: 'The Forest',
+    preorderCount: 124,
+    purchaseCount: 4213,
+    releaseDate: 1401408000,
+    averageRating: 3.3,
+    ratingCount: 314,
+    genre: 'adventure',
+    tags: ['adventure', 'survival', 'open world', 'action', 'singleplayer', 'horror']
+  }),
+  (game22:Game {
+    gameId: 22,
+    gameName: 'DARK SOULS II',
+    preorderCount: 6321,
+    purchaseCount: 7412,
+    releaseDate: 1427846400,
+    averageRating: 4.1,
+    ratingCount: 487,
+    genre: 'RPG',
+    tags: ['RPG', 'strategy', 'multiplayer', 'action', 'difficult', 'singleplayer']
+  }),
+  (game23:Game {
+    gameId: 23,
+    gameName: 'The Sims 3',
+    preorderCount: 1241,
+    purchaseCount: 6642,
+    releaseDate: 1243900800,
+    averageRating: 2.7,
+    ratingCount: 211,
+    genre: 'simulation',
+    tags: ['simulation', 'casual', 'singleplayer', 'sandbox', 'building']
+  }),
+  (game24:Game {
+    gameId: 24,
+    gameName: 'Borderlands 2',
+    preorderCount: 784,
+    purchaseCount: 3871,
+    releaseDate: 1348099200,
+    averageRating: 4.4,
+    ratingCount: 555,
+    genre: 'FPS',
+    tags: ['FPS', 'action', 'multiplayer', 'RPG', 'shooter', 'singleplayer', 'open world']
+  }),
+  (game25:Game {
+    gameId: 25,
+    gameName: 'Mad Max',
+    preorderCount: 111,
+    purchaseCount: 2001,
+    releaseDate: 1441065600,
+    averageRating: 1.4,
+    ratingCount: 321,
+    genre: 'action',
+    tags: ['action', 'open world', 'survival', 'adventure', 'driving', 'singleplayer']
+  }),
+  (game26:Game {
+    gameId: 26,
+    gameName: 'Tropico 5',
+    preorderCount: 421,
+    purchaseCount: 5521,
+    releaseDate: 1400803200,
+    averageRating: 3.8,
+    ratingCount: 101,
+    genre: 'strategy',
+    tags: ['strategy', 'simulation', 'builder', 'sandbox', 'multiplayer']
+  }),
+  (game27:Game {
+    gameId: 27,
+    gameName: 'Endless Legend',
+    preorderCount: 212,
+    purchaseCount: 5284,
+    releaseDate: 1410998400,
+    averageRating: 4.4,
+    ratingCount: 621,
+    genre: 'strategy',
+    tags: ['strategy', 'RTS', 'fantasy', 'indie', 'multiplayer', 'turn-based']
+  }),
+  (game28:Game {
+    gameId: 28,
+    gameName: 'STAR WARS Jedi Knight',
+    preorderCount: 451,
+    purchaseCount: 7411,
+    releaseDate: 1063670400,
+    averageRating: 2.4,
+    ratingCount: 222,
+    genre: 'action',
+    tags: ['action', 'FPS', 'shooter', 'classic', 'singleplayer', 'star wars']
+  }),
+  (game29:Game {
+    gameId: 29,
+    gameName: 'Dishonored',
+    preorderCount: 945,
+    purchaseCount: 2341,
+    releaseDate: 1350000000,
+    averageRating: 1.7,
+    ratingCount: 184,
+    genre: 'action',
+    tags: ['action', 'stealth', 'singleplayer', 'adventure', 'open world']
+  }),
+  (game30:Game {
+    gameId: 30,
+    gameName: 'Warhammer® 40,000: Dawn of War II',
+    preorderCount: 2654,
+    purchaseCount: 9452,
+    releaseDate: 1235001600,
+    averageRating: 3.7,
+    ratingCount: 631,
+    genre: 'strategy',
+    tags: ['strategy', 'RTS', 'multiplayer', 'classic', 'tactical', 'action', 'sci-fi']
+  }),
+
+  (user1:User {
+    userId: 1,
+    username: 'user_1'
+  }),
+  (user2:User {
+    userId: 2,
+    username: 'user_2'
+  }),
+  (user3:User {
+    userId: 3,
+    username: 'user_3'
+  }),
+  (user4:User {
+    userId: 4,
+    username: 'user_4'
+  }),
+  (user5:User {
+    userId: 5,
+    username: 'user_5'
+  }),
+  (user6:User {
+    userId: 6,
+    username: 'user_6'
+  }),
+  (user7:User {
+    userId: 7,
+    username: 'user_7'
+  }),
+  (user8:User {
+    userId: 8,
+    username: 'user_8'
+  }),
+  (user9:User {
+    userId: 9,
+    username: 'user_9'
+  }),
+  (user10:User {
+    userId: 10,
+    username: 'user_10'
+  }),
+
+  (order1:Order {
+    orderId: 1,
+    orderDate: 1293840000,
+    orderPrice: 15.99
+  }),
+  (order2:Order {
+    orderId: 2,
+    orderDate: 1316390400,
+    orderPrice: 89.99
+  }),
+  (order3:Order {
+    orderId: 3,
+    orderDate: 1315526400,
+    orderPrice: 29.99
+  }),
+  (order4:Order {
+    orderId: 4,
+    orderDate: 1451795800,
+    orderPrice: 21.99
+  }),
+  (order5:Order {
+    orderId: 5,
+    orderDate: 1451896800,
+    orderPrice: 41.99
+  }),
+  (order6:Order {
+    orderId: 6,
+    orderDate: 1851836800,
+    orderPrice: 39.99
+  }),
+  (order7:Order {
+    orderId: 7,
+    orderDate: 1951856860,
+    orderPrice: 18.99
+  }),
+  (order8:Order {
+    orderId: 8,
+    orderDate: 1657836800,
+    orderPrice: 31.99
+  }),
+  (order9:Order {
+    orderId: 9,
+    orderDate: 1451856860,
+    orderPrice: 62.99
+  }),
+  (order10:Order {
+    orderId: 10,
+    orderDate: 1451436860,
+    orderPrice: 72.99
+  }),
+  (order11:Order {
+    orderId: 11,
+    orderDate: 1755636890,
+    orderPrice: 12.99
+  }),
+  (order12:Order {
+    orderId: 12,
+    orderDate: 2036436860,
+    orderPrice: 125.99
+  }),
+  (order13:Order {
+    orderId: 13,
+    orderDate: 1284836860,
+    orderPrice: 122.56
+  }),
+  (order14:Order {
+    orderId: 14,
+    orderDate: 1956636890,
+    orderPrice: 18.99
+  }),
+  (order15:Order {
+    orderId: 15,
+    orderDate: 2036436860,
+    orderPrice: 34.99
+  }),
+  (order16:Order {
+    orderId: 16,
+    orderDate: 1583436860,
+    orderPrice: 28.56
+  }),
+  (order17:Order {
+    orderId: 17,
+    orderDate: 1864836860,
+    orderPrice: 42.56
+  }),
+ /* (order18:Order {
+    orderId: 18,
+    orderDate: 1987654345,
+    orderPrice: 15.99
+  }),
+  (order19:Order {
+    orderId: 19,
+    orderDate: 2344687975,
+    orderPrice: 38.99
+  }),
+  (order20:Order {
+    orderId: 20,
+    orderDate: 2345665567,
+    orderPrice: 23.76
+  }),
+*/
+
+  (order1)-[:CONTAINS]->(game1),
+  (order2)-[:CONTAINS]->(game2),
+  (order2)-[:CONTAINS]->(game5),
+  (order3)-[:CONTAINS]->(game10),
+  (order4)-[:CONTAINS]->(game9),
+  (order5)-[:CONTAINS]->(game9),
+  (order5)-[:CONTAINS]->(game11),
+  (order6)-[:CONTAINS]->(game8),
+  (order6)-[:CONTAINS]->(game3),
+  (order7)-[:CONTAINS]->(game7),
+  (order8)-[:CONTAINS]->(game3),
+  (order9)-[:CONTAINS]->(game4),
+  (order9)-[:CONTAINS]->(game6),
+  (order10)-[:CONTAINS]->(game6),
+  (order10)-[:CONTAINS]->(game1),
+  (order11)-[:CONTAINS]->(game12),
+  (order12)-[:CONTAINS]->(game10),
+  (order12)-[:CONTAINS]->(game17),
+  (order12)-[:CONTAINS]->(game15),
+  (order12)-[:CONTAINS]->(game1),
+  (order13)-[:CONTAINS]->(game11),
+  (order13)-[:CONTAINS]->(game18),
+  (order13)-[:CONTAINS]->(game16),
+  (order13)-[:CONTAINS]->(game14),
+  (order14)-[:CONTAINS]->(game13),
+  (order15)-[:CONTAINS]->(game16),
+  (order16)-[:CONTAINS]->(game19),
+  (order17)-[:CONTAINS]->(game20),
+
+
+  (user1)-[:PURCHASED]->(order1),
+  (user1)-[:PURCHASED]->(order2),
+  (user1)-[:PURCHASED]->(order5),
+  (user2)-[:PURCHASED]->(order3),
+  (user3)-[:PURCHASED]->(order4),
+  (user4)-[:PURCHASED]->(order6),
+  (user4)-[:PURCHASED]->(order11),
+  (user5)-[:PURCHASED]->(order13),
+  (user5)-[:PURCHASED]->(order15),
+  (user6)-[:PURCHASED]->(order9),
+  (user7)-[:PURCHASED]->(order10),
+  (user7)-[:PURCHASED]->(order16),
+  (user8)-[:PURCHASED]->(order17),
+  (user8)-[:PURCHASED]->(order7),
+  (user9)-[:PURCHASED]->(order14),
+  (user9)-[:PURCHASED]->(order8),
+  (user10)-[:PURCHASED]->(order12),
+
+
+  (user1)-[:MOST_RECENTLY_ORDERED]->(order5),
+  (user1)-[:PREVIOUSLY_ORDERED]->(order2),
+  (user1)-[:PREVIOUSLY_ORDERED]->(order1),
+  (user2)-[:MOST_RECENTLY_ORDERED]->(order3),
+  (user3)-[:MOST_RECENTLY_ORDERED]->(order4),
+  (user4)-[:MOST_RECENTLY_ORDERED]->(order11),
+  (user4)-[:PREVIOUSLY_ORDERED]->(order6),
+  (user5)-[:MOST_RECENTLY_ORDERED]->(order15),
+  (user5)-[:PREVIOUSLY_ORDERED]->(order13),
+  (user6)-[:MOST_RECENTLY_ORDERED]->(order9),
+  (user7)-[:MOST_RECENTLY_ORDERED]->(order16),
+  (user7)-[:PREVIOUSLY_ORDERED]->(order10),
+  (user8)-[:MOST_RECENTLY_ORDERED]->(order17),
+  (user8)-[:PREVIOUSLY_ORDERED]->(order7),
+  (user9)-[:MOST_RECENTLY_ORDERED]->(order14),
+  (user9)-[:PREVIOUSLY_ORDERED]->(order8),
+  (user10)-[:MOST_RECENTLY_ORDERED]->(order12),
+
+
+
+  (user1)-[:FRIENDS_WITH]->(user2),
+  (user2)-[:FRIENDS_WITH]->(user1),
+  (user1)-[:FRIENDS_WITH]->(user4),
+  (user4)-[:FRIENDS_WITH]->(user1),
+  (user1)-[:FRIENDS_WITH]->(user8),
+  (user8)-[:FRIENDS_WITH]->(user1),
+  (user3)-[:FRIENDS_WITH]->(user4),
+  (user4)-[:FRIENDS_WITH]->(user3),
+  (user4)-[:FRIENDS_WITH]->(user9),
+  (user9)-[:FRIENDS_WITH]->(user4),
+  (user5)-[:FRIENDS_WITH]->(user3),
+  (user3)-[:FRIENDS_WITH]->(user5),
+  (user5)-[:FRIENDS_WITH]->(user2),
+  (user2)-[:FRIENDS_WITH]->(user5),
+  (user6)-[:FRIENDS_WITH]->(user4),
+  (user4)-[:FRIENDS_WITH]->(user6),
+  (user6)-[:FRIENDS_WITH]->(user5),
+  (user5)-[:FRIENDS_WITH]->(user6),
+  (user7)-[:FRIENDS_WITH]->(user2),
+  (user2)-[:FRIENDS_WITH]->(user7),
+  (user8)-[:FRIENDS_WITH]->(user3),
+  (user3)-[:FRIENDS_WITH]->(user8),
+  (user9)-[:FRIENDS_WITH]->(user7),
+  (user7)-[:FRIENDS_WITH]->(user9),
+  (user9)-[:FRIENDS_WITH]->(user8),
+  (user8)-[:FRIENDS_WITH]->(user9),
+  (user9)-[:FRIENDS_WITH]->(user6),
+  (user6)-[:FRIENDS_WITH]->(user9),
+
+  (user1)-[:PLAYED_WITH {
+    playTime: 13,
+    lastPlayed: '2016-05-05 13:01:30'
+  }]->(game1),
+  (user1)-[:PLAYED_WITH {
+    playTime: 401,
+    lastPlayed: '2015-09-30 20:39:49'
+  }]->(game2),
+  (user1)-[:MOST_RECENTLY_PLAYED]->(game1),
+  (user1)-[:PREVIOUSLY_PLAYED]->(game2),
+
+  (user2)-[:PLAYED_WITH {
+    playTime: 401,
+    lastPlayed: '2015-09-30 17:23:53'
+  }]->(game2),
+  (user2)-[:MOST_RECENTLY_PLAYED]->(game2),
+
+  (user3)-[:PLAYED_WITH {
+    playTime: 231,
+    lastPlayed: '2016-02-05 23:38:29'
+  }]->(game9),
+  (user3)-[:MOST_RECENTLY_PLAYED]->(game9),
+
+  (user4)-[:PLAYED_WITH {
+    playTime: 23,
+    lastPlayed: '2015-02-05 18:29:03'
+  }]->(game12),
+  (user4)-[:PLAYED_WITH {
+    playTime: 123,
+    lastPlayed: '2015-09-05 22:08:48'
+  }]->(game8),
+  (user4)-[:PLAYED_WITH {
+    playTime: 43,
+    lastPlayed: '2015-01-08 11:03:45'
+  }]->(game3),
+  (user4)-[:MOST_RECENTLY_PLAYED]->(game12),
+  (user4)-[:PREVIOUSLY_PLAYED]->(game3),
+  (user4)-[:PREVIOUSLY_PLAYED]->(game8),
+
+  (user5)-[:PLAYED_WITH {
+    playTime: 153,
+    lastPlayed: '2016-01-15 14:55:11'
+  }]->(game18),
+  (user5)-[:PLAYED_WITH {
+    playTime: 53,
+    lastPlayed: '2016-01-31 22:01:52'
+  }]->(game14),
+  (user5)-[:PLAYED_WITH {
+    playTime: 53,
+    lastPlayed: '2016-01-05 16:21:40'
+  }]->(game16),
+  (user5)-[:MOST_RECENTLY_PLAYED]->(game18),
+  (user5)-[:PREVIOUSLY_PLAYED]->(game14),
+  (user5)-[:PREVIOUSLY_PLAYED]->(game16),
+
+  (user6)-[:PLAYED_WITH {
+    playTime: 53,
+    lastPlayed: '2016-01-05 23:34:22'
+  }]->(game4),
+  (user6)-[:PLAYED_WITH {
+    playTime: 53,
+    lastPlayed: '2016-01-05 19:12:54'
+  }]->(game6),
+  (user6)-[:MOST_RECENTLY_PLAYED]->(game4),
+  (user6)-[:PREVIOUSLY_PLAYED]->(game6),
+
+  (user7)-[:PLAYED_WITH {
+    playTime: 53,
+    lastPlayed: '2016-01-05 14:20:40'
+  }]->(game19),
+  (user7)-[:MOST_RECENTLY_PLAYED]->(game19),
+
+  (user8)-[:PLAYED_WITH {
+    playTime: 53,
+    lastPlayed: '2016-01-05 17:48:04'
+  }]->(game7),
+  (user8)-[:PLAYED_WITH {
+    playTime: 53,
+    lastPlayed: '2016-01-05 22:21:49'
+  }]->(game20),
+  (user8)-[:MOST_RECENTLY_PLAYED]->(game20),
+  (user8)-[:PREVIOUSLY_PLAYED]->(game7),
+
+  (user9)-[:PLAYED_WITH {
+    playTime: 53,
+    lastPlayed: '2016-01-05 14:37:12'
+  }]->(game13),
+  (user9)-[:PLAYED_WITH {
+    playTime: 53,
+    lastPlayed: '2016-01-05 22:02:40'
+  }]->(game3),
+  (user9)-[:MOST_RECENTLY_PLAYED]->(game13),
+  (user9)-[:PREVIOUSLY_PLAYED]->(game3),
+
+  (user10)-[:PLAYED_WITH {
+    playTime: 53,
+    lastPlayed: '2016-01-15 18:59:40'
+  }]->(game17),
+  (user10)-[:PLAYED_WITH {
+    playTime: 53,
+    lastPlayed: '2015-11-28 21:19:21'
+  }]->(game15),
+  (user10)-[:PLAYED_WITH {
+    playTime: 53,
+    lastPlayed: '2015-09-15 17:45:56'
+  }]->(game10),
+  (user10)-[:PLAYED_WITH {
+    playTime: 253,
+    lastPlayed: '2015-01-19 21:12:34'
+  }]->(game1),
+  (user10)-[:MOST_RECENTLY_PLAYED]->(game17),
+  (user10)-[:PREVIOUSLY_PLAYED]->(game15),
+  (user10)-[:PREVIOUSLY_PLAYED]->(game10),
+  (user10)-[:PREVIOUSLY_PLAYED]->(game1),
+
+
+
+  (user1)-[:WISHES_FOR]->(game3),
+  (user1)-[:WISHES_FOR]->(game4),
+
+  (user1)-[:RATES {rating: 5}]->(game1),
+  (user1)-[:RATES {rating: 4}]->(game3),
+
+  (user1)-[:RATES {rating: 1}]->(game2)
