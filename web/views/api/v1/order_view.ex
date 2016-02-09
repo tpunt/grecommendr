@@ -9,9 +9,10 @@ defmodule GameRecommender.Api.V1.OrderView do
     %{order: render_one(order, GameRecommender.Api.V1.OrderView, "order.json")}
   end
 
-  def render("order.json", %{order: %{"orders" => order}}) do
+  def render("order.json", %{order: %{"games" => games, "order" => order}}) do
     %{orderId: order["orderId"],
       orderPrice: order["orderPrice"],
-      orderDate: order["orderDate"]}
+      orderDate: order["orderDate"],
+      games: games}
   end
 end
