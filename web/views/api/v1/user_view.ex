@@ -9,7 +9,7 @@ defmodule GameRecommender.Api.V1.UserView do
     %{user: render_one(user, GameRecommender.Api.V1.UserView, "user.json")}
   end
 
-  def render("user.json", %{user: %{"users" => user}}) do
-    %{username: user["username"], userId: user["userId"]}
+  def render("user.json", %{user: %{"user" => user, "friends" => friends}}) do
+    %{username: user["username"], userId: user["userId"], userFriends: friends}
   end
 end

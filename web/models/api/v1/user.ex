@@ -6,23 +6,19 @@ defmodule GameRecommender.Api.V1.User do
       case params do
         %{"username" => username} ->
           """
-            MATCH (user:User {username: '#{username}'})
-            RETURN user
+            MATCH (user:User {username: '#{username}'})-[:FRIENDS_WITH]->(user2:User)
+            RETURN user, collect(user2.userId)
           """
         _ ->
           """
-            MATCH (users:User)
-            RETURN users
+          MATCH (user:User)-[:FRIENDS_WITH]->(user2:User)
+          RETURN user, collect(user2.userId) AS friends
           """
       end
 
-    users = Neo4j.query!(Neo4j.conn, cypher_query)
-
-    case users do
+    case Neo4j.query!(Neo4j.conn, cypher_query) do
       [] ->
-        raise "User not found"
-      [%{"user" => user_info}] -> # normalise struct keys to "users"
-        [%{"users" => user_info}]
+        raise "No users found"
       users ->
         users
     end
@@ -30,17 +26,15 @@ defmodule GameRecommender.Api.V1.User do
 
   def fetch_user(user_id) do
     cypher_query = """
-      MATCH (user:User {userId: #{user_id}})
-      RETURN user
+      MATCH (user:User {userId: #{user_id}})-[:FRIENDS_WITH]->(user2:User)
+      RETURN user, collect(user2.userId) AS friends
     """
 
-    user = Neo4j.query!(Neo4j.conn, cypher_query)
-
-    case user do
+    case Neo4j.query!(Neo4j.conn, cypher_query) do
       [] ->
         raise "User not found"
-      [%{"user" => user_info}] -> # normalise the name (simpler solution...)
-        %{"users" => user_info}
+      [user] ->
+        user
     end
   end
 end
