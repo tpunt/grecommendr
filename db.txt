@@ -724,5 +724,22 @@ CREATE
 
   (user1)-[:RATES {rating: 5}]->(game1),
   (user1)-[:RATES {rating: 4}]->(game3),
+  (user1)-[:RATES {rating: 1}]->(game2),
 
-  (user1)-[:RATES {rating: 1}]->(game2)
+  (user2)-[:RATES {rating: 3}]->(game4),
+  (user2)-[:RATES {rating: 2}]->(game1),
+  (user2)-[:RATES {rating: 5}]->(game3),
+  (user2)-[:RATES {rating: 4}]->(game5),
+  (user2)-[:RATES {rating: 4}]->(game7),
+
+  (user3)-[:RATES {rating: 4}]->(game7),
+  (user3)-[:RATES {rating: 2}]->(game4),
+  (user3)-[:RATES {rating: 3}]->(game1),
+  (user3)-[:RATES {rating: 5}]->(game9),
+
+  (user4)-[:RATES {rating: 1}]->(game11),
+  (user4)-[:RATES {rating: 3}]->(game15),
+  (user4)-[:RATES {rating: 4}]->(game7),
+  (user4)-[:RATES {rating: 2}]->(game1),
+  (user4)-[:RATES {rating: 5}]->(game3),
+  (user4)-[:RATES {rating: 3}]->(game2)
