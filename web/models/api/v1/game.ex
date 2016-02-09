@@ -11,18 +11,14 @@ defmodule GameRecommender.Api.V1.Game do
           """
         _ ->
           """
-            MATCH (games:Game)
-            RETURN games
+            MATCH (game:Game)
+            RETURN game
           """
       end
 
-    games = Neo4j.query!(Neo4j.conn, cypher_query)
-
-    case games do
+    case Neo4j.query!(Neo4j.conn, cypher_query) do
       [] ->
-        raise "User not found"
-      [%{"game" => game_info}] -> # normalise struct keys to "games"
-        [%{"games" => game_info}]
+        raise "No games found"
       games ->
         games
     end
@@ -34,13 +30,11 @@ defmodule GameRecommender.Api.V1.Game do
       RETURN game
     """
 
-    game = Neo4j.query!(Neo4j.conn, cypher_query)
-
-    case game do
+    case Neo4j.query!(Neo4j.conn, cypher_query) do
       [] ->
         raise "Game not found"
-      [%{"game" => game_info}] -> # normalise the name (simpler solution...)
-        %{"games" => game_info}
+      [game] ->
+        game
     end
   end
 end

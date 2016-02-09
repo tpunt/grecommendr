@@ -9,19 +9,15 @@ defmodule GameRecommender.Api.V1.GameView do
     %{game: render_one(game, GameRecommender.Api.V1.GameView, "game.json")}
   end
 
-  def render("game.json", %{game: game}) do
-    case game do # singular/plural problems...
-      %{"games" => game} ->
-        game = game
-      %{"game" => game} ->
-        game = game
-    end
+  def render("game.json", %{game: game_info}) do
+    %{"game" => game} = game_info
+
     %{gameId: game["gameId"],
       gameName: game["gameName"],
       preorderCount: game["preorderCount"],
       purchaseCount: game["purchaseCount"],
-      demoDownloadCount: game["demoDownloadCount"],
       releaseDate: game["releaseDate"],
+      averageRating: game["averageRating"],
       genre: game["genre"],
       tags: game["tags"]}
   end
