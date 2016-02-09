@@ -11,7 +11,6 @@ defmodule GameRecommender.Api.V1.GameController do
   end
 
   def show(conn, params = %{"id" => id}) do
-    IO.inspect params
     game = Game.fetch_game(id)
 
     render(conn, "show.json", game: game)
