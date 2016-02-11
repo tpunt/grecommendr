@@ -39,12 +39,16 @@ Example output:
 ### GET api/v1/games/recommendations
 Query string filtering:
  - user_id=[0-9]+
- - type=(for_user|most_popular|top_rated|upcoming|recently_released)
+ - type=(most_popular|top_rated)
 
 Provide a `user_id` to tailor the results to a particular user.
 
-The type defaults to `for_user`, and that requires a `user_id` to
-be specified.
+The type defaults to `for_user` (which was not implemented in time), and that
+requires a `user_id` to be specified.
+
+The `most_popular` type can be further customised by specified a `time_lapse`
+parameter. This has the possible values of `past_year`, `past_month`, or
+`past_day`, and defaults to `past_year`.
 
 All example outputs follow the same formatting as the **api/v1/games** resource.
 
